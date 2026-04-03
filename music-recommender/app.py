@@ -26,9 +26,17 @@
 #         recommended_music_poster.append(fetch_poster(music_title))
 #         return recommended_music,recommended_music_poster
     
-# music_dict=pickle.load(open('musirec.pkl','rb'))
+import os
+import pickle
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+music_path = os.path.join(BASE_DIR, 'musirec.pkl')
+
+music_dict = pickle.load(open(music_path, 'rb'))
 # music=pd.DataFrame(music_dict)
-# similarity=pickle.load(open('similarities.pkl','rb'))
+
+similarity_path = os.path.join(BASE_DIR, 'similarity.pkl')
+similarity = pickle.load(open(similarity_path, 'rb'))
 # st.title('Music Recommendation System')
 # selected_music_name=st.selectbox('select a music you like',music['title'].values)
 # if st.button('Recommend'):
