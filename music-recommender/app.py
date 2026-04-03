@@ -4,19 +4,22 @@ import pandas as pd
 import requests
 import os
 
-
+# ---------------- FILE PATHS ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 music_path = os.path.join(BASE_DIR, 'musirec.pkl')
-similarity_path = os.path.join(BASE_DIR, 'similarity.pkl')   # <-- make sure file name is this
+similarity_path = os.path.join(BASE_DIR, 'similarity.pkl')
 
+# ---------------- LOAD DATA ----------------
+with open(music_path, 'rb') as f:
+    music_dict = pickle.load(f)
 
-music_dict = pickle.load(open(music_path, 'rb'))
+with open(similarity_path, 'rb') as f:
+    similarity = pickle.load(f)
+
 music = pd.DataFrame(music_dict)
 
-similarity = pickle.load(open(similarity_path, 'rb'))
-
-
+# ---------------- FETCH POSTER ----------------
 def fetch_poster(music_title):
     try:
         url = f"https://saavn.sumit.co/api/search/songs?query={music_title}"
@@ -27,12 +30,16 @@ def fetch_poster(music_title):
     except:
         return "https://via.placeholder.com/300x300?text=No+Image"
 
-
+# ---------------- RECOMMEND FUNCTION ----------------
 def recommend(musics):
     music_index = music[music['title'] == musics].index[0]
     distances = similarity[music_index]
 
-    music_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+    music_list = sorted(
+        list(enumerate(distances)),
+        reverse=True,
+        key=lambda x: x[1]
+    )[1:6]
 
     recommended_music = []
     recommended_music_poster = []
@@ -44,8 +51,8 @@ def recommend(musics):
 
     return recommended_music, recommended_music_poster
 
-
-st.title(' Music Recommendation System')
+# ---------------- STREAMLIT UI ----------------
+st.title('🎵 Music Recommendation System')
 
 selected_music_name = st.selectbox(
     'Select a music you like',
